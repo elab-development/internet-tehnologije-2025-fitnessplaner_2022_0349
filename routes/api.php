@@ -1,8 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\VezbaController;
+
+use App\Http\Controllers\TreningController;
+use App\Http\Controllers\HidratacijaController;
+use App\Http\Controllers\DnevnikIshraneController; // <-- VAŽNO: koristi controller, ne model
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +39,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/vezbe', [VezbaController::class, 'index']);
     Route::get('/vezbe/{id}', [VezbaController::class, 'show']);
 
+    Route::get('/treninzi', [TreningController::class, 'index']);
+    Route::get('/treninzi/{id}', [TreningController::class, 'show']);
+    Route::post('/treninzi', [TreningController::class, 'store']);
+    Route::put('/treninzi/{id}', [TreningController::class, 'update']);
+    Route::delete('/treninzi/{id}', [TreningController::class, 'destroy']);
+
+    Route::get('/hidratacije', [HidratacijaController::class, 'index']);
+    Route::get('/hidratacije/{id}', [HidratacijaController::class, 'show']);
+    Route::post('/hidratacije', [HidratacijaController::class, 'store']);
+    Route::put('/hidratacije/{id}', [HidratacijaController::class, 'update']);
+    Route::delete('/hidratacije/{id}', [HidratacijaController::class, 'destroy']);
+
+    Route::get('/dnevnici_ishrane', [DnevnikIshraneController::class, 'index']);
+    Route::get('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'show']);
+    Route::post('/dnevnici_ishrane', [DnevnikIshraneController::class, 'store']);
+    Route::put('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'update']);
+    Route::delete('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'destroy']);
+
     /*
     |--------------------------------------------------------------------------
     | RUTE ZA TRENERA I ADMINA
@@ -53,17 +76,9 @@ Route::middleware('auth:sanctum')->group(function () {
     | samo admin ima pristup upravljanju korisnicima
     */
     Route::middleware('uloga:admin')->group(function () {
-
-        // kreiranje novih korisnika (trener / admin)
         Route::post('/admin/users', [AuthController::class, 'createUser']);
-
-        // lista korisnika (uz opcioni filter po ulozi)
         Route::get('/admin/users', [AuthController::class, 'listUsers']);
-
-        // izmena korisnika (trener ili sam admin)
         Route::put('/admin/users/{id}', [AuthController::class, 'updateUser']);
-
-        // brisanje korisnika (trener ili sam admin)
         Route::delete('/admin/users/{id}', [AuthController::class, 'deleteUser']);
     });
 });
