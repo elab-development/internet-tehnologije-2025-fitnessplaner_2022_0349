@@ -24,7 +24,7 @@ export default function Login({ onAuth }) {
       localStorage.setItem("user", JSON.stringify(user));
 
       onAuth?.();         // <- odmah osveži token u App.jsx
-      navigate("/");      // <- ide na Home jer token postoji
+      navigate("/redirect");      // <- ide redirect zavisno od uloge
     } catch (err) {
       setMessage("Neispravni podaci za prijavu.");
     } finally {

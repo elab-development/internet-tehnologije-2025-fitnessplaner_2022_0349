@@ -18,7 +18,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'uloga', // admin | trener | korisnik
+        'uloga', // admin | trener | klijent
     ];
 
     protected $hidden = [
