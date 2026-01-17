@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Vezba extends Model
 {
     use HasFactory;
-
+    
     // (1) Eksplicitno kažemo tabelu 
     protected $table = 'vezbe';
 
