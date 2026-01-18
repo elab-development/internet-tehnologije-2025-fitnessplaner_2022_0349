@@ -8,6 +8,9 @@ use App\Http\Controllers\VezbaController;
 use App\Http\Controllers\TreningController;
 use App\Http\Controllers\HidratacijaController;
 use App\Http\Controllers\DnevnikIshraneController; // <-- VAŽNO: koristi controller, ne model
+use App\Http\Controllers\NamirnicaController;
+use App\Http\Controllers\RasporedTreningaController;
+use App\Models\RasporedTreninga;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +18,8 @@ use App\Http\Controllers\DnevnikIshraneController; // <-- VAŽNO: koristi contro
 |--------------------------------------------------------------------------
 | Javni endpointi – dostupni bez logovanja
 */
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+/*Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);*/
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +27,7 @@ Route::post('/login', [AuthController::class, 'login']);
 |--------------------------------------------------------------------------
 | Sve rute ispod zahtevaju validan Sanctum token
 */
-Route::middleware('auth:sanctum')->group(function () {
+/*Route::middleware('auth:sanctum')->group(function () {
 
     // osnovne auth rute
     Route::get('/me', [AuthController::class, 'me']);
@@ -51,14 +54,27 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/hidratacije/{id}', [HidratacijaController::class, 'update']);
     Route::delete('/hidratacije/{id}', [HidratacijaController::class, 'destroy']);
 
+    Route::get('/namirnice', [NamirnicaController::class, 'index']);
+    Route::get('/namirnice/{id}', [NamirnicaController::class, 'show']);
+    Route::post('/namirnice', [NamirnicaController::class, 'store']);
+    Route::put('/namirnice/{id}', [NamirnicaController::class, 'update']);
+    Route::delete('/namirnice/{id}', [NamirnicaController::class, 'destroy']);
+
+    Route::get('/rasporedi_treninga', [RasporedTreningaController::class, 'index']);
+    Route::get('/rasporedi_treninga/{id}', [RasporedTreningaController::class, 'show']);
+    Route::post('/rasporedi_treninga', [RasporedTreningaController::class, 'store']);
+    Route::put('/rasporedi_treninga/{id}', [RasporedTreningaController::class, 'update']);
+    Route::delete('/rasporedi_treninga/{id}', [RasporedTreningaController::class, 'destroy']);
+
     Route::get('/dnevnici_ishrane', [DnevnikIshraneController::class, 'index']);
     Route::get('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'show']);
     Route::post('/dnevnici_ishrane', [DnevnikIshraneController::class, 'store']);
     Route::put('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'update']);
     Route::delete('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'destroy']);
 
+
     //uklanjanje izvodjenja vezbe
-    Route::delete('/treninzi/{treningId}/izvodjenja/{izvodjenjeId}', [TreningController::class, 'destroyIzvodjenje']);
+    /*Route::delete('/treninzi/{treningId}/izvodjenja/{izvodjenjeId}', [TreningController::class, 'destroyIzvodjenje']);
 
 
     /*
@@ -67,7 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     | samo trener i admin mogu da dodaju, menjaju i brišu vežbe
     */
-    Route::middleware('uloga:trener,admin')->group(function () {
+    /*Route::middleware('uloga:trener,admin')->group(function () {
         Route::post('/vezbe', [VezbaController::class, 'store']);
         Route::put('/vezbe/{id}', [VezbaController::class, 'update']);
         Route::delete('/vezbe/{id}', [VezbaController::class, 'destroy']);
@@ -79,10 +95,12 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     | samo admin ima pristup upravljanju korisnicima
     */
-    Route::middleware('uloga:admin')->group(function () {
+
+
+   /* Route::middleware('uloga:admin')->group(function () {
         Route::post('/admin/users', [AuthController::class, 'createUser']);
         Route::get('/admin/users', [AuthController::class, 'listUsers']);
         Route::put('/admin/users/{id}', [AuthController::class, 'updateUser']);
         Route::delete('/admin/users/{id}', [AuthController::class, 'deleteUser']);
     });
-});
+});*/
