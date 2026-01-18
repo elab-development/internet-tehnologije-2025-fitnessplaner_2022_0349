@@ -1,0 +1,514 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { api } from "../api";
+import PageCard from "../components/PageCard";
+
+export default function ClientTrainings() {
+  const [mode, setMode] = useState("list"); // list | add | edit
+  const [loading, setLoading] = useState(false);
+
+  // odvojene poruke: jedna za treninge, jedna za vežbe (da ne bude “lažna greška”)
+  const [msgTreninzi, setMsgTreninzi] = useState("");
+  const [msgVezbe, setMsgVezbe] = useState("");
+  const [msgAction, setMsgAction] = useState("");
+
+  const [treninzi, setTreninzi] = useState([]);
+  const [vezbe, setVezbe] = useState([]);
+
+  const [q, setQ] = useState("");
+  const [editId, setEditId] = useState(null);
+
+  // trening osnovno
+  const [form, setForm] = useState({
+    naziv: "",
+    trajanje_minuta: "",
+    tezina: "",
+  });
+
+  // STAVKE = izvodjenja
+  const [items, setItems] = useState([]); // [{rb, vezba_id, serije, ponavljanja, pauza_sekundi, napomena}]
+  const [selectedRb, setSelectedRb] = useState(null); // za “Obriši stavku” kao u terminu
+
+  // “Dodaj stavku” forma (combo + polja)
+  const [stavka, setStavka] = useState({
+    vezba_id: "",
+    serije: "3",
+    ponavljanja: "10",
+    pauza_sekundi: "60",
+    napomena: "",
+  });
+
+  const allowNumberOrEmpty = (v) => v === "" || /^\d+$/.test(v);
+
+  const loadTreninzi = async () => {
+    setMsgTreninzi("");
+    try {
+      const res = await api.get("/treninzi");
+      setTreninzi(res.data || []);
+    } catch (e) {
+      setMsgTreninzi(e?.response?.data?.message || "Ne mogu da učitam treninge.");
+    }
+  };
+
+  const loadVezbe = async () => {
+    setMsgVezbe("");
+    try {
+      const res = await api.get("/vezbe");
+      setVezbe(res.data || []);
+    } catch (e) {
+      setMsgVezbe(e?.response?.data?.message || "Ne mogu da učitam vežbe (proveri API / token).");
+    }
+  };
+
+  const loadAll = async () => {
+    setLoading(true);
+    setMsgAction("");
+    await loadTreninzi();
+    await loadVezbe();
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const filteredTreninzi = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    if (!s) return treninzi;
+    return treninzi.filter((t) => (t.naziv || "").toLowerCase().includes(s));
+  }, [q, treninzi]);
+
+  const sortedVezbe = useMemo(() => {
+    return [...vezbe].sort((a, b) => (a.naziv || "").localeCompare(b.naziv || ""));
+  }, [vezbe]);
+
+  const resetForm = () => {
+    setForm({ naziv: "", trajanje_minuta: "", tezina: "" });
+    setItems([]);
+    setSelectedRb(null);
+    setStavka({ vezba_id: "", serije: "3", ponavljanja: "10", pauza_sekundi: "60", napomena: "" });
+    setEditId(null);
+  };
+
+  const startAdd = () => {
+    resetForm();
+    setMode("add");
+    setMsgAction("");
+  };
+
+  const startEdit = async (trening) => {
+    setLoading(true);
+    setMsgAction("");
+    try {
+      const res = await api.get(`/treninzi/${trening.id}`);
+      const full = res.data;
+
+      setEditId(full.id);
+      setForm({
+        naziv: full.naziv || "",
+        trajanje_minuta: full.trajanje_minuta ?? "",
+        tezina: full.tezina ?? "",
+      });
+
+      const iz = (full.izvodjenja || []).slice().sort((a, b) => (a.redosled ?? 0) - (b.redosled ?? 0));
+      setItems(
+        iz.map((i, idx) => ({
+          rb: idx + 1,
+          vezba_id: i.vezba_id,
+          serije: i.serije ?? "",
+          ponavljanja: i.ponavljanja ?? "",
+          pauza_sekundi: i.pauza_sekundi ?? "",
+          napomena: i.napomena ?? "",
+        }))
+      );
+      setSelectedRb(null);
+      setMode("edit");
+    } catch (e) {
+      setMsgAction("Ne mogu da učitam trening za izmenu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeTraining = async (id) => {
+    if (!confirm("Da li ste sigurni da želite da obrišete trening?")) return;
+    setLoading(true);
+    setMsgAction("");
+    try {
+      await api.delete(`/treninzi/${id}`);
+      setMsgAction("Trening obrisan.");
+      await loadTreninzi();
+      setMode("list");
+      resetForm();
+    } catch (e) {
+      setMsgAction(e?.response?.data?.message || "Brisanje nije uspelo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // DODAJ STAVKU (kao tvoj termin)
+  const addStavka = () => {
+    setMsgAction("");
+
+    const vezbaId = Number(stavka.vezba_id);
+    if (!vezbaId) {
+      setMsgAction("Izaberite vežbu iz liste.");
+      return;
+    }
+
+    // poštuje unique(trening_id, vezba_id)
+    if (items.some((it) => Number(it.vezba_id) === vezbaId)) {
+      setMsgAction("Ta vežba je već dodata u trening.");
+      return;
+    }
+
+    const nextRb = items.length + 1;
+
+    setItems((prev) => [
+      ...prev,
+      {
+        rb: nextRb,
+        vezba_id: vezbaId,
+        serije: stavka.serije,
+        ponavljanja: stavka.ponavljanja,
+        pauza_sekundi: stavka.pauza_sekundi,
+        napomena: stavka.napomena || "",
+      },
+    ]);
+
+    setSelectedRb(nextRb);
+  };
+
+  // OBRIŠI STAVKU (kao tvoj termin) – briše iz local liste; u bazi se upiše kad klikneš “Kreiraj/Sačuvaj”
+  const deleteStavka = () => {
+    setMsgAction("");
+    if (!selectedRb) {
+      setMsgAction("Izaberite stavku (klik na red u tabeli) pa onda Obriši stavku.");
+      return;
+    }
+
+    setItems((prev) => {
+      const next = prev.filter((x) => x.rb !== selectedRb);
+      return next.map((x, idx) => ({ ...x, rb: idx + 1 }));
+    });
+    setSelectedRb(null);
+  };
+
+  // INLINE EDIT u tabeli (menja polja u izabranoj stavci)
+  const updateItem = (rb, patch) => {
+    setItems((prev) => prev.map((x) => (x.rb === rb ? { ...x, ...patch } : x)));
+  };
+
+  const toPayload = () => ({
+    naziv: form.naziv,
+    trajanje_minuta: form.trajanje_minuta ? Number(form.trajanje_minuta) : null,
+    tezina: form.tezina || null,
+    izvodjenja: items.map((it) => ({
+      vezba_id: Number(it.vezba_id),
+      redosled: Number(it.rb),
+      serije: it.serije === "" ? null : Number(it.serije),
+      ponavljanja: it.ponavljanja === "" ? null : Number(it.ponavljanja),
+      pauza_sekundi: it.pauza_sekundi === "" ? null : Number(it.pauza_sekundi),
+      napomena: it.napomena || null,
+    })),
+  });
+
+  const submitAdd = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMsgAction("");
+    try {
+      if (items.length === 0) {
+        setMsgAction("Dodajte bar jednu stavku treninga (vežbu).");
+        setLoading(false);
+        return;
+      }
+
+      await api.post("/treninzi", toPayload());
+      setMsgAction("Trening kreiran.");
+      await loadTreninzi();
+      setMode("list");
+      resetForm();
+    } catch (e2) {
+      setMsgAction(e2?.response?.data?.message || "Greška: proveri podatke.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitEdit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMsgAction("");
+    try {
+      if (items.length === 0) {
+        setMsgAction("Trening mora imati bar jednu stavku (izvođenje vežbe).");
+        setLoading(false);
+        return;
+      }
+
+      await api.put(`/treninzi/${editId}`, toPayload());
+      setMsgAction("Trening izmenjen.");
+      await loadTreninzi();
+      setMode("list");
+      resetForm();
+    } catch (e2) {
+      setMsgAction(e2?.response?.data?.message || "Izmena nije uspela.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // STIL
+  const input = { padding: "10px 12px", borderRadius: 10, border: "1px solid #cfe3fb", minWidth: 260, outline: "none" };
+  const btn = { padding: "10px 16px", borderRadius: 10, border: "none", background: "#1e88e5", color: "white", fontWeight: 700, cursor: "pointer" };
+  const btnGhost = { padding: "10px 14px", borderRadius: 10, border: "1px solid #cfe3fb", background: "white", fontWeight: 700, cursor: "pointer" };
+  const tableWrap = { marginTop: 16, borderRadius: 14, overflow: "hidden", background: "white", border: "1px solid #e6eef7" };
+  const th = { background: "#1e88e5", color: "white", padding: 12, textAlign: "left", fontWeight: 800 };
+  const td = { padding: 12, borderBottom: "1px solid #eef3fb", verticalAlign: "top" };
+
+  return (
+    <PageCard
+      title="Moji treninzi"
+      right={
+        mode === "list" ? (
+          <button style={btn} onClick={startAdd}>+ Novi trening</button>
+        ) : (
+          <button style={btnGhost} onClick={() => { setMode("list"); resetForm(); setMsgAction(""); }}>
+            ← Nazad
+          </button>
+        )
+      }
+    >
+      {/* poruke */}
+      {(msgTreninzi || msgVezbe || msgAction) && (
+        <div style={{ marginBottom: 12, padding: 12, borderRadius: 12, border: "1px solid #cfe3fb", background: "#ffffff" }}>
+          {msgTreninzi && <div><b>Treninzi:</b> {msgTreninzi}</div>}
+          {msgVezbe && <div><b>Vežbe:</b> {msgVezbe}</div>}
+          {msgAction && <div><b>Akcija:</b> {msgAction}</div>}
+        </div>
+      )}
+
+      {/* LIST */}
+      {mode === "list" && (
+        <>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Pretraži trening..." style={input} />
+            <button style={btn} onClick={() => setQ(q)}>Pretraži</button>
+          </div>
+
+          <div style={tableWrap}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th style={th}>Naziv</th>
+                  <th style={th}>Trajanje</th>
+                  <th style={th}>Težina</th>
+                  <th style={th}>Akcije</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading && (<tr><td style={td} colSpan={4}>Učitavam...</td></tr>)}
+
+                {!loading && filteredTreninzi.map((t) => (
+                  <tr key={t.id}>
+                    <td style={td}>{t.naziv}</td>
+                    <td style={td}>{t.trajanje_minuta ?? "-"}</td>
+                    <td style={td}>{t.tezina ?? "-"}</td>
+                    <td style={td}>
+                      <button style={btnGhost} onClick={() => startEdit(t)}>✏️ Izmeni</button>{" "}
+                      <button style={btnGhost} onClick={() => removeTraining(t.id)}>🗑️ Obriši</button>
+                    </td>
+                  </tr>
+                ))}
+
+                {!loading && filteredTreninzi.length === 0 && (
+                  <tr><td style={td} colSpan={4}>Nema treninga.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      {/* ADD / EDIT */}
+      {(mode === "add" || mode === "edit") && (
+        <div style={{ marginTop: 16, background: "white", borderRadius: 14, padding: 16, border: "1px solid #e6eef7" }}>
+          <h3 style={{ marginTop: 0, color: "#1976d2" }}>{mode === "add" ? "Kreiranje treninga" : "Izmena treninga"}</h3>
+
+          <form onSubmit={mode === "add" ? submitAdd : submitEdit} style={{ display: "grid", gap: 12 }}>
+            {/* trening */}
+            <input
+              style={input}
+              placeholder="Naziv treninga"
+              value={form.naziv}
+              onChange={(e) => setForm({ ...form, naziv: e.target.value })}
+              required
+            />
+
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <input
+                style={input}
+                placeholder="Trajanje (min) - opciono"
+                value={form.trajanje_minuta}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (allowNumberOrEmpty(v)) setForm({ ...form, trajanje_minuta: v });
+                }}
+              />
+                  <select
+              style={input}
+              value={form.tezina}
+              onChange={(e) => setForm({ ...form, tezina: e.target.value })}
+            >
+              <option value="">-- Izaberi težinu (opciono) --</option>
+              <option value="lako">Lako</option>
+              <option value="srednje">Srednje</option>
+              <option value="tesko">Teško</option>
+            </select>
+            </div>
+
+            {/* stavke treninga */}
+            <div style={{ fontWeight: 900, color: "#1976d2" }}>Stavke treninga (izvođenja)</div>
+
+            {vezbe.length === 0 ? (
+              <div style={{ padding: 12, borderRadius: 12, border: "1px solid #cfe3fb", background: "#f7fbff", fontWeight: 700 }}>
+                Nema vežbi u bazi. Dodajte vežbe kao trener/admin.
+              </div>
+            ) : (
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 140px 160px 160px", gap: 10 }}>
+                  <select
+                    style={{ ...input, minWidth: "100%" }}
+                    value={stavka.vezba_id}
+                    onChange={(e) => setStavka({ ...stavka, vezba_id: e.target.value })}
+                  >
+                    <option value="">— Izaberi vežbu —</option>
+                    {sortedVezbe.map((v) => (
+                      <option key={v.id} value={v.id}>{v.naziv}</option>
+                    ))}
+                  </select>
+
+                  <input
+                    style={{ ...input, minWidth: "100%" }}
+                    placeholder="Serije"
+                    value={stavka.serije}
+                    onChange={(e) => allowNumberOrEmpty(e.target.value) && setStavka({ ...stavka, serije: e.target.value })}
+                  />
+                  <input
+                    style={{ ...input, minWidth: "100%" }}
+                    placeholder="Ponavljanja"
+                    value={stavka.ponavljanja}
+                    onChange={(e) => allowNumberOrEmpty(e.target.value) && setStavka({ ...stavka, ponavljanja: e.target.value })}
+                  />
+                  <input
+                    style={{ ...input, minWidth: "100%" }}
+                    placeholder="Pauza (sek)"
+                    value={stavka.pauza_sekundi}
+                    onChange={(e) => allowNumberOrEmpty(e.target.value) && setStavka({ ...stavka, pauza_sekundi: e.target.value })}
+                  />
+                </div>
+
+                <input
+                  style={{ ...input, minWidth: "100%" }}
+                  placeholder="Napomena (opciono)"
+                  value={stavka.napomena}
+                  onChange={(e) => setStavka({ ...stavka, napomena: e.target.value })}
+                />
+
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  <button type="button" style={btn} onClick={addStavka} disabled={loading}>
+                    Dodaj stavku
+                  </button>
+                  <button type="button" style={btnGhost} onClick={deleteStavka} disabled={loading}>
+                    Obriši stavku
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* tabela stavki */}
+            <div style={tableWrap}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr>
+                    <th style={th}>RB</th>
+                    <th style={th}>Vežba</th>
+                    <th style={th}>Serije</th>
+                    <th style={th}>Ponavljanja</th>
+                    <th style={th}>Pauza (s)</th>
+                    <th style={th}>Napomena</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.length === 0 && (
+                    <tr><td style={td} colSpan={6}>Nema stavki. Dodajte prvu stavku iznad.</td></tr>
+                  )}
+
+                  {items.map((it) => {
+                    const v = vezbe.find((x) => x.id === Number(it.vezba_id));
+                    const active = selectedRb === it.rb;
+
+                    return (
+                      <tr
+                        key={it.rb}
+                        onClick={() => setSelectedRb(it.rb)}
+                        style={{ background: active ? "#eef6ff" : "white", cursor: "pointer" }}
+                      >
+                        <td style={td}>{it.rb}</td>
+                        <td style={td}>{v ? v.naziv : `#${it.vezba_id}`}</td>
+
+                        {/* inline edit */}
+                        <td style={td}>
+                          <input
+                            style={{ ...input, minWidth: 100 }}
+                            value={it.serije}
+                            placeholder="-"
+                            onChange={(e) => allowNumberOrEmpty(e.target.value) && updateItem(it.rb, { serije: e.target.value })}
+                          />
+                        </td>
+
+                        <td style={td}>
+                          <input
+                            style={{ ...input, minWidth: 120 }}
+                            value={it.ponavljanja}
+                            placeholder="-"
+                            onChange={(e) => allowNumberOrEmpty(e.target.value) && updateItem(it.rb, { ponavljanja: e.target.value })}
+                          />
+                        </td>
+
+                        <td style={td}>
+                          <input
+                            style={{ ...input, minWidth: 130 }}
+                            value={it.pauza_sekundi}
+                            placeholder="-"
+                            onChange={(e) => allowNumberOrEmpty(e.target.value) && updateItem(it.rb, { pauza_sekundi: e.target.value })}
+                          />
+                        </td>
+
+                        <td style={td}>
+                          <input
+                            style={{ ...input, minWidth: 240 }}
+                            value={it.napomena}
+                            placeholder="-"
+                            onChange={(e) => updateItem(it.rb, { napomena: e.target.value })}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* submit */}
+            <button style={btn} type="submit" disabled={loading}>
+              {loading ? "Čuvam..." : mode === "add" ? "Kreiraj trening" : "Sačuvaj izmene"}
+            </button>
+          </form>
+        </div>
+      )}
+    </PageCard>
+  );
+}

@@ -12,6 +12,8 @@ import RequireRole from "./src/pages/RequireRole";
 import UserHome from "./src/pages/UserHome";
 import TrainerHome from "./src/pages/TrainerHome";
 import AdminHome from "./src/pages/AdminHome";
+import ClientTrainings from "./src/pages/ClientTrainings";
+import ClientExercises from "./src/pages/ClientExercises";
 
 import Navbar from "./src/components/Navbar";
 
@@ -32,10 +34,7 @@ function App() {
     <BrowserRouter>
       {!token ? (
         <Routes>
-          <Route
-            path="/"
-            element={<Login onAuth={() => setToken(localStorage.getItem("token"))} />}
-          />
+          <Route path="/" element={<Login onAuth={() => setToken(localStorage.getItem("token"))} />} />
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -47,8 +46,28 @@ function App() {
             <Route path="/" element={<RoleRedirect />} />
             <Route path="/redirect" element={<RoleRedirect />} />
 
+            {/* KLIJENT */}
             <Route path="/korisnik" element={<UserHome onLogout={handleLogout} />} />
 
+            <Route
+              path="/korisnik/treninzi"
+              element={
+                <RequireRole allow={["klijent"]}>
+                  <ClientTrainings />
+                </RequireRole>
+              }
+            />
+
+            <Route
+              path="/korisnik/vezbe"
+              element={
+                <RequireRole allow={["klijent"]}>
+                  <ClientExercises />
+                </RequireRole>
+              }
+            />
+
+            {/* TRENER */}
             <Route
               path="/trener"
               element={
@@ -58,7 +77,7 @@ function App() {
               }
             />
 
-            {/* admin početna (ne prikazuje listu) */}
+            {/* ADMIN */}
             <Route
               path="/admin"
               element={
@@ -73,7 +92,6 @@ function App() {
               }
             />
 
-            {/* spisak trenera tek na klik u navbaru */}
             <Route
               path="/admin/treneri"
               element={

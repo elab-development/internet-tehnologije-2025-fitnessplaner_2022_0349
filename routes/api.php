@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\VezbaController;
+use App\Http\Controllers\VezbaController;
 
 use App\Http\Controllers\TreningController;
 use App\Http\Controllers\HidratacijaController;
@@ -56,6 +56,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/dnevnici_ishrane', [DnevnikIshraneController::class, 'store']);
     Route::put('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'update']);
     Route::delete('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'destroy']);
+
+    //uklanjanje izvodjenja vezbe
+    Route::delete('/treninzi/{treningId}/izvodjenja/{izvodjenjeId}', [TreningController::class, 'destroyIzvodjenje']);
+
 
     /*
     |--------------------------------------------------------------------------

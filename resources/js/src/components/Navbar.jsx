@@ -31,26 +31,8 @@ export default function Navbar({ onLogout }) {
   });
 
   return (
-    <div
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 20,
-        background: "#f7fbff",
-        borderBottom: "1px solid #e6eef7",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-          padding: "12px 16px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-        }}
-      >
+    <div style={{ position: "sticky", top: 0, zIndex: 20, background: "#f7fbff", borderBottom: "1px solid #e6eef7" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <span style={{ fontWeight: 900, color: "#1976d2" }}>FitnessPlaner</span>
 
@@ -61,12 +43,14 @@ export default function Navbar({ onLogout }) {
             </>
           )}
 
-          {uloga === "trener" && (
-            <NavLink to="/trener" style={linkStyle}>Trener</NavLink>
-          )}
+          {uloga === "trener" && <NavLink to="/trener" style={linkStyle}>Trener</NavLink>}
 
           {uloga === "klijent" && (
-            <NavLink to="/korisnik" style={linkStyle}>Korisnik</NavLink>
+            <>
+              <NavLink to="/korisnik" style={linkStyle}>Korisnik</NavLink>
+              <NavLink to="/korisnik/treninzi" style={linkStyle}>Treninzi</NavLink>
+              <NavLink to="/korisnik/vezbe" style={linkStyle}>Vežbe</NavLink>
+            </>
           )}
         </div>
 
@@ -75,14 +59,7 @@ export default function Navbar({ onLogout }) {
             onLogout?.();
             navigate("/", { replace: true });
           }}
-          style={{
-            padding: "10px 12px",
-            borderRadius: 12,
-            border: "1px solid #cfe3fb",
-            background: "#fff",
-            cursor: "pointer",
-            fontWeight: 900,
-          }}
+          style={{ padding: "10px 12px", borderRadius: 12, border: "1px solid #cfe3fb", background: "#fff", cursor: "pointer", fontWeight: 900 }}
         >
           Logout
         </button>
