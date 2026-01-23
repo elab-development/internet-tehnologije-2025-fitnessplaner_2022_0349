@@ -47,7 +47,7 @@ export default function Navbar({ onLogout }) {
 
           {uloga === "klijent" && (
             <>
-              <NavLink to="/korisnik" style={linkStyle}>Korisnik</NavLink>
+              <NavLink to="/korisnik" style={linkStyle}>Fitness aplikacija</NavLink>
               <NavLink to="/korisnik/treninzi" style={linkStyle}>Treninzi</NavLink>
               <NavLink to="/korisnik/vezbe" style={linkStyle}>Vežbe</NavLink>
             </>

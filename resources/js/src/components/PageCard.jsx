@@ -1,4 +1,4 @@
-import React from "react";
+
 
 export default function PageCard({ title, right, children }) {
   const page = { padding: 24 };
