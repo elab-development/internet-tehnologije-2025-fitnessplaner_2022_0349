@@ -14,6 +14,7 @@ import TrainerHome from "./src/pages/TrainerHome";
 import AdminHome from "./src/pages/AdminHome";
 import ClientTrainings from "./src/pages/ClientTrainings";
 import ClientExercises from "./src/pages/ClientExercises";
+import ClientHydration from "./src/pages/ClientHydration";
 
 import Navbar from "./src/components/Navbar";
 
@@ -66,6 +67,14 @@ function App() {
                 </RequireRole>
               }
             />
+            <Route
+            path="/korisnik/hidratacija"
+            element={
+              <RequireRole allow={["klijent"]}>
+                <ClientHydration />
+              </RequireRole>
+            }
+          />
 
             {/* TRENER */}
             <Route

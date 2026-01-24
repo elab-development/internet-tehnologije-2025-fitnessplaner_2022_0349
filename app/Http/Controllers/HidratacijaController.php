@@ -30,12 +30,10 @@ class HidratacijaController extends Controller
     public function store(Request $request)
     {
         $validator= Validator::make($request->all(),[
-            'korisnik_id'   => 'required|integer|exists:users,id',
             'datum'         => 'required|date',
-            'cilj_mi'       => 'required|integer',
-            'uneseno_mi'    => 'required|integer',
-            'created_at'        => 'required|date',
-            'updated_at'        => 'required|date',
+            'cilj_ml'       => 'required|integer',
+            'uneseno_ml'    => 'required|integer',
+           
       ]);
 
         if($validator->fails()){
@@ -76,10 +74,9 @@ class HidratacijaController extends Controller
             return response()->json(['message'=>'Hidratacija nije pronadjena.'],404);
         }
         $validator= Validator::make($request->all(),[
-            'korisnik_id'   => 'required|integer|exists:users,id',
             'datum'         => 'required|date',
-            'cilj_mi'       => 'required|integer',
-            'uneseno_mi'    => 'required|integer',
+            'cilj_ml'       => 'required|integer',
+            'uneseno_ml'    => 'required|integer',
             'created_at'        => 'required|date',
             'updated_at'        => 'required|date',
 
@@ -92,7 +89,7 @@ class HidratacijaController extends Controller
     ],422);
    }
    $data=$validator->validated();
-   //$hidratacija->update($data);
+   $hidratacija->update($data);
    return response()->json($hidratacija,200);
     }
 
@@ -106,7 +103,7 @@ class HidratacijaController extends Controller
         if(!$hidratacija){
             return response()->json(['message'=>'Hidratacija nije pronadjena.'],404);
         }
-        $hidratacija->delete;
+        $hidratacija->delete();
         return response()->json(['message'=>'Hidratacija je obrisana.'],200);
     }
 }

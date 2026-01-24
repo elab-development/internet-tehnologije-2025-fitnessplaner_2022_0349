@@ -50,6 +50,9 @@ export default function Navbar({ onLogout }) {
               <NavLink to="/korisnik" style={linkStyle}>Fitness aplikacija</NavLink>
               <NavLink to="/korisnik/treninzi" style={linkStyle}>Treninzi</NavLink>
               <NavLink to="/korisnik/vezbe" style={linkStyle}>Vežbe</NavLink>
+              <NavLink to="/korisnik/hidratacija" style={linkStyle}>Hidratacija</NavLink>
+
+
             </>
           )}
         </div>
