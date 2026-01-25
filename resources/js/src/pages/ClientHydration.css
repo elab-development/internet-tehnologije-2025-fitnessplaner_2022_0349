@@ -1,0 +1,100 @@
+.hydration-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.hydration-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.hydration-empty button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.hydration-error {
+  background: #ffdede;
+  color: #b00020;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+.date {
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+/* 💧 ČAŠA */
+.glass-wrapper {
+  position: relative;
+  width: 120px;
+  height: 200px;
+  margin: 20px auto;
+}
+
+.glass {
+  width: 100%;
+  height: 100%;
+  border: 4px solid #4da3ff;
+  border-radius: 0 0 25px 25px;
+  overflow: hidden;
+  background: #eaf4ff;
+  position: relative;
+}
+
+.water {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(180deg, #4da3ff, #1c6ed5);
+  transition: height 0.4s ease;
+}
+
+.percent {
+  position: absolute;
+  top: -30px;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* 📊 INFO */
+.amount {
+  font-size: 18px;
+}
+
+.message {
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+/* ➕ DUGMAD */
+.hydration-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.hydration-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.hydration-actions .primary {
+  background: #4da3ff;
+  color: white;
+}
+
+.hydration-actions .success {
+  background: #4caf50;
+  color: white;
+}

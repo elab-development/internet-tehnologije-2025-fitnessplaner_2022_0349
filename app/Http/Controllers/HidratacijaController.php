@@ -11,10 +11,12 @@ class HidratacijaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return Hidratacija::all();
-    }
+   public function index()
+{
+    return Hidratacija::where('korisnik_id', auth()->id())
+        ->orderBy('datum', 'desc')
+        ->get();
+}
 
     /**
      * Show the form for creating a new resource.
@@ -27,25 +29,35 @@ class HidratacijaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validator= Validator::make($request->all(),[
-            'datum'         => 'required|date',
-            'cilj_ml'       => 'required|integer',
-            'uneseno_ml'    => 'required|integer',
-           
-      ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'datum' => 'required|date',
+        'cilj_ml' => 'required|integer|min:1',
+        'uneseno_ml' => 'required|integer|min:0',
+    ]);
 
-        if($validator->fails()){
-            return response()->json([
-        'message'=> 'Validacija nije prosla',
-        'errors'=> $validator->errors(),
-            ],422);
-        }
-        $data=$validator->validated();
-        $hidratacija=Hidratacija::create($data);
-        return response()->json($hidratacija,201);
+    $korisnik_id = auth()->id();
+
+    $exists = Hidratacija::where('korisnik_id', $korisnik_id)
+        ->where('datum', $request->datum)
+        ->exists();
+
+    if ($exists) {
+        return response()->json([
+            'message' => 'Unos za danas već postoji.'
+        ], 409);
     }
+
+    $hidratacija = Hidratacija::create([
+        'korisnik_id' => $korisnik_id,
+        'datum' => $request->datum,
+        'cilj_ml' => $request->cilj_ml,
+        'uneseno_ml' => $request->uneseno_ml,
+    ]);
+
+    return response()->json($hidratacija, 201);
+}
 
     /**
      * Display the specified resource.
@@ -66,32 +78,27 @@ class HidratacijaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,$id)
-    {   
-        $hidratacija=Hidratacija::find($id);
+    public function update(Request $request, $id)
+{
+    $hidratacija = Hidratacija::where('id', $id)
+        ->where('korisnik_id', auth()->id())
+        ->first();
 
-        if(!$hidratacija){
-            return response()->json(['message'=>'Hidratacija nije pronadjena.'],404);
-        }
-        $validator= Validator::make($request->all(),[
-            'datum'         => 'required|date',
-            'cilj_ml'       => 'required|integer',
-            'uneseno_ml'    => 'required|integer',
-            'created_at'        => 'required|date',
-            'updated_at'        => 'required|date',
-
-      ]);
-
-   if($validator->fails()){
-    return response()->json([
-   'message'=> 'Validacija nije prosla',
-   'errors'=> $validator->errors(),
-    ],422);
-   }
-   $data=$validator->validated();
-   $hidratacija->update($data);
-   return response()->json($hidratacija,200);
+    if (!$hidratacija) {
+        return response()->json(['message' => 'Nije pronađeno'], 404);
     }
+
+    $validated = $request->validate([
+        'datum' => 'required|date',
+        'cilj_ml' => 'required|integer|min:1',
+        'uneseno_ml' => 'required|integer|min:0',
+    ]);
+
+    $hidratacija->update($validated);
+
+    return response()->json($hidratacija, 200);
+}
+
 
     /**
      * Remove the specified resource from storage.
