@@ -12,9 +12,12 @@ import RequireRole from "./src/pages/RequireRole";
 import UserHome from "./src/pages/UserHome";
 import TrainerHome from "./src/pages/TrainerHome";
 import AdminHome from "./src/pages/AdminHome";
+
 import ClientTrainings from "./src/pages/ClientTrainings";
 import ClientExercises from "./src/pages/ClientExercises";
 import ClientHydration from "./src/pages/ClientHydration";
+
+import TrainerTrainings from "./src/pages/TrainerTrainings";
 
 import Navbar from "./src/components/Navbar";
 
@@ -35,7 +38,10 @@ function App() {
     <BrowserRouter>
       {!token ? (
         <Routes>
-          <Route path="/" element={<Login onAuth={() => setToken(localStorage.getItem("token"))} />} />
+          <Route
+            path="/"
+            element={<Login onAuth={() => setToken(localStorage.getItem("token"))} />}
+          />
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -48,7 +54,14 @@ function App() {
             <Route path="/redirect" element={<RoleRedirect />} />
 
             {/* KLIJENT */}
-            <Route path="/korisnik" element={<UserHome onLogout={handleLogout} />} />
+            <Route
+              path="/korisnik"
+              element={
+                <RequireRole allow={["klijent"]}>
+                  <UserHome onLogout={handleLogout} />
+                </RequireRole>
+              }
+            />
 
             <Route
               path="/korisnik/treninzi"
@@ -67,14 +80,15 @@ function App() {
                 </RequireRole>
               }
             />
+
             <Route
-            path="/korisnik/hidratacija"
-            element={
-              <RequireRole allow={["klijent"]}>
-                <ClientHydration />
-              </RequireRole>
-            }
-          />
+              path="/korisnik/hidratacija"
+              element={
+                <RequireRole allow={["klijent"]}>
+                  <ClientHydration />
+                </RequireRole>
+              }
+            />
 
             {/* TRENER */}
             <Route
@@ -82,6 +96,15 @@ function App() {
               element={
                 <RequireRole allow={["trener", "admin"]}>
                   <TrainerHome onLogout={handleLogout} />
+                </RequireRole>
+              }
+            />
+
+            <Route
+              path="/trener/treninzi"
+              element={
+                <RequireRole allow={["trener", "admin"]}>
+                  <TrainerTrainings />
                 </RequireRole>
               }
             />
