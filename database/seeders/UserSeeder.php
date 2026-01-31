@@ -55,7 +55,15 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'uloga' => 'trener',
             ]
-        );
+        );User::updateOrCreate(
+    ['email' => 'Milos@test.com'],
+    [
+        'name' => 'Milos Trener',
+        'password' => Hash::make('password'),
+        'uloga' => 'trener',
+    ]
+);
+
 
         // ADMIN
         User::updateOrCreate(
