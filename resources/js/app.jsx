@@ -17,7 +17,7 @@ import ClientTrainings from "./src/pages/ClientTrainings";
 import ClientExercises from "./src/pages/ClientExercises";
 import ClientHydration from "./src/pages/ClientHydration";
 
-import TrainerTrainings from "./src/pages/TrainerTrainings";
+
 
 import Navbar from "./src/components/Navbar";
 
@@ -104,7 +104,7 @@ function App() {
               path="/trener/treninzi"
               element={
                 <RequireRole allow={["trener", "admin"]}>
-                  <TrainerTrainings />
+                  <TrainerHome onLogout={handleLogout}/>
                 </RequireRole>
               }
             />
