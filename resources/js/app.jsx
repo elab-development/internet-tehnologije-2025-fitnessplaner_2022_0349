@@ -20,6 +20,7 @@ import ClientHydration from "./src/pages/ClientHydration";
 
 
 import Navbar from "./src/components/Navbar";
+import TrainerExercises from "./src/pages/TrainerExercises";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -101,13 +102,16 @@ function App() {
             />
 
             <Route
-              path="/trener/treninzi"
+              path="/trener/vezbe"
               element={
                 <RequireRole allow={["trener", "admin"]}>
-                  <TrainerHome onLogout={handleLogout}/>
+                  <TrainerExercises/>
                 </RequireRole>
               }
+
             />
+                  
+
 
             {/* ADMIN */}
             <Route

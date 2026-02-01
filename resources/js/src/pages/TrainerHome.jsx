@@ -1,83 +1,62 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './TrainerHome.css';
 
-const TrainerDashboard = () => {
-  const [activeTab, setActiveTab] = useState('treninzi');
-  const [checkedItems, setCheckedItems] = useState([true, true, false, false]);
-
-  const toggleCheck = (index) => {
-    const newChecked = [...checkedItems];
-    newChecked[index] = !newChecked[index];
-    setCheckedItems(newChecked);
-  };
-
-  const treninzi = [
-    { naziv: 'Upper A • Ana Mijić', izmenjeno: 'danas' },
-    { naziv: 'Lower A • Marko Marković', izmenjeno: 'juče' },
-    { naziv: 'Full Body • Test Korisnik', izmenjeno: 'pre 3 dana' }
+export default function TrainerHome() {
+  // Poruke dana - različita poruka svaki dan u nedelji
+  const motivationalQuotes = [
+    "Uspeh je suma malih napora, ponovljenih iz dana u dan.",
+    "Tvoje telo može sve - um je taj koji treba ubediti.",
+    "Ne pitaj se šta možeš, nego šta ćeš danas postići!",
+    "Svaki trening te čini jačim - fizički i mentalno.",
+    "Bol koji osećaš danas biće snaga sutra.",
+    "Nema skraćenica - rad je jedini put do uspeha.",
+    "Prestani da sanjaš, počni da radiš!"
   ];
 
-  const vezbe = [
-    { naziv: 'Bench Press', grupa: 'Grudi', tip: 'Compound', oprema: 'Barbell' },
-    { naziv: 'Squat', grupa: 'Noge', tip: 'Compound', oprema: 'Barbell' },
-    { naziv: 'Deadlift', grupa: 'Leđa', tip: 'Compound', oprema: 'Barbell' }
-  ];
+  const dayOfWeek = new Date().getDay();
+  const dailyQuote = motivationalQuotes[dayOfWeek];
 
   return (
-    <div className="trainer-bg">
-      <div className="trainer-topbar">
-        <div className="trainer-brand">
-          <div className="trainer-brandTitle">FitnessPlaner</div>
-          <div className="trainer-pill">TRENER</div>
-        </div>
+    <div className="trainer-container">
+      
+      {/* Dobrodošli Nazad Badge */}
+      <div className="welcome-badge">
+        <span className="badge-icon">✨</span>
+        <span className="badge-text">DOBRODOŠLI NAZAD</span>
+      </div>
 
-        <div className="trainer-tabs">
-          <div
-            className={`trainer-tab ${activeTab === 'klijenti' ? 'active' : ''}`}
-            onClick={() => setActiveTab('klijenti')}
-          >
-            Moji klijenti
-          </div>
-          <div
-            className={`trainer-tab ${activeTab === 'treninzi' ? 'active' : ''}`}
-            onClick={() => setActiveTab('treninzi')}
-          >
-            Treninzi
-          </div>
-          <div
-            className={`trainer-tab ${activeTab === 'katalog' ? 'active' : ''}`}
-            onClick={() => setActiveTab('katalog')}
-          >
-            Katalog vežbi
-          </div>
-        </div>
+      {/* Naslov */}
+      <h1 className="main-title">Trener Panel</h1>
+      <p className="subtitle">Upravljaj klijentima i vežbama, uredi njihove treninge i drži sve organizovano.</p>
 
-        <div className="trainer-right">
-          <div className="trainer-user">
-            <div className="trainer-avatar">TK</div>
-            <div className="trainer-userMeta">
-              <div className="trainer-userName">Trener Korisnik</div>
-              <div className="trainer-userRole">Personal Trainer</div>
-            </div>
-          </div>
-          <button className="trainer-logout">Logout</button>
+      {/* Poruka Dana Kartica */}
+      <div className="quote-card">
+        <div className="quote-decoration-1"></div>
+        <div className="quote-decoration-2"></div>
+        
+        <div className="quote-content">
+          <h3 className="quote-label">💬 Poruka dana</h3>
+          <p className="quote-text">"{dailyQuote}"</p>
         </div>
       </div>
 
-      <div className="trainer-container">
-        <div className="trainer-hero">
-          <div>
-            <span className="trainer-heroBadge">✨ DOBRODOŠLI NAZAD</span>
-            <h1 className="trainer-heroTitle">Trener panel</h1>
-            <p className="trainer-heroText">
-              Upravljaj klijentima, uredi njihove treninge i drži sve organizovano.
+      {/* Slika o Treningu */}
+      <div className="training-card">
+        <img 
+          src="https://media.istockphoto.com/id/503393204/photo/dumbbells-and-yoga-mat-on-wood-table.jpg?s=2048x2048&w=is&k=20&c=3y5PE35tQytutps7nSf2W6dz1lq5vryGIvnDMi6HKGA=" 
+          alt="Trening motivacija"
+          className="training-image"
+        />
+        <div className="training-overlay">
+          <div className="training-content">
+            <h3 className="training-title">Fokusiraj se na kontinuitet</h3>
+            <p className="training-text">
+              Mali koraci svaki dan donose velike rezultate. Tvoja posvećenost je ključ uspeha! 💪
             </p>
           </div>
         </div>
       </div>
+
     </div>
   );
-};
-
-export default TrainerDashboard;
-
+}

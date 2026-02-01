@@ -43,7 +43,14 @@ export default function Navbar({ onLogout }) {
             </>
           )}
 
-          {uloga === "trener" && <NavLink to="/trener" style={linkStyle}>Trener</NavLink>}
+          {uloga === "trener" && (
+            <>
+            <NavLink to="/trener" style={linkStyle}>Trener</NavLink>
+            <NavLink to="/trener/users" style={linkStyle}>Moji klijenti</NavLink>
+            <NavLink to="/trener/vezbe" style={linkStyle}>Vežbe</NavLink>
+
+            </>
+            )}
 
           {uloga === "klijent" && (
             <>
