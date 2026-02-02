@@ -17,7 +17,8 @@ import ClientTrainings from "./src/pages/ClientTrainings";
 import ClientExercises from "./src/pages/ClientExercises";
 import ClientHydration from "./src/pages/ClientHydration";
 
-
+import AdminClients from "./src/pages/AdminClients";
+import AdminAdmin from "./src/pages/AdminAdmin";
 
 import Navbar from "./src/components/Navbar";
 import TrainerExercises from "./src/pages/TrainerExercises";
@@ -118,12 +119,7 @@ function App() {
               path="/admin"
               element={
                 <RequireRole allow={["admin"]}>
-                  <div style={{ padding: 24, maxWidth: 1100, margin: "0 auto" }}>
-                    <h2 style={{ color: "#1976d2", marginTop: 0 }}>Admin</h2>
-                    <p style={{ fontWeight: 700, color: "#334155" }}>
-                      Klikni gore u meniju na “Treneri” da vidiš spisak trenera.
-                    </p>
-                  </div>
+                  <AdminAdmin/>
                 </RequireRole>
               }
             />
@@ -133,6 +129,14 @@ function App() {
               element={
                 <RequireRole allow={["admin"]}>
                   <AdminHome />
+                </RequireRole>
+              }
+            />
+              <Route
+              path="/admin/users"
+              element={
+                <RequireRole allow={["admin"]}>
+                  <AdminClients/>
                 </RequireRole>
               }
             />

@@ -40,6 +40,7 @@ export default function Navbar({ onLogout }) {
             <>
               <NavLink to="/admin" style={linkStyle}>Admin</NavLink>
               <NavLink to="/admin/treneri" style={linkStyle}>Treneri</NavLink>
+              <NavLink to="/admin/users" style={linkStyle}>Klijenti</NavLink>
             </>
           )}
 

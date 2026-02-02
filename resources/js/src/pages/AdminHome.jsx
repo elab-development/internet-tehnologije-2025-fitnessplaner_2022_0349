@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { api } from "../api";
 
+
 export default function AdminHome() {
   const [mode, setMode] = useState("list"); // list | add | edit
   const [q, setQ] = useState("");
@@ -144,7 +145,8 @@ export default function AdminHome() {
     <div style={page}>
       <div style={card}>
         <div style={header}>
-          <h1 style={title}>🦷 Spisak trenera</h1>
+          <h1 style={title}>Spisak trenera</h1>
+          
         </div>
 
         <div style={actionsRow}>
