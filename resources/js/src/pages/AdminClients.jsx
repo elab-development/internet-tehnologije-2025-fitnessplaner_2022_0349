@@ -8,7 +8,7 @@ export default function AdminClients() {
   const [msg, setMsg] = useState("");
   const [klijenti, setKlijenti] = useState([]);
 
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ ime_i_prezime: "", email: "", password: "" });
   const [editId, setEditId] = useState(null);
 
   const load = async () => {
@@ -33,12 +33,12 @@ export default function AdminClients() {
     const s = q.trim().toLowerCase();
     if (!s) return klijenti;
     return klijenti.filter((k) =>
-      `${k.name} ${k.email}`.toLowerCase().includes(s)
+      `${k.ime_i_prezime} ${k.email}`.toLowerCase().includes(s)
     );
   }, [q, klijenti]);
 
   const resetForm = () => {
-    setForm({ name: "", email: "", password: "" });
+    setForm({ ime_i_prezime: "", email: "", password: "" });
     setEditId(null);
   };
 
@@ -50,7 +50,7 @@ export default function AdminClients() {
   const startEdit = (k) => {
     setMsg("");
     setEditId(k.id);
-    setForm({ name: k.name || "", email: k.email || "", password: "" });
+    setForm({ ime_i_prezime: k.ime_i_prezime || "", email: k.email || "", password: "" });
     setMode("edit");
   };
 
@@ -91,7 +91,7 @@ export default function AdminClients() {
     setLoading(true);
     setMsg("");
     try {
-      const payload = { name: form.name, email: form.email };
+      const payload = { ime_i_prezime: form.ime_i_prezime, email: form.email };
       if (form.password?.trim()) payload.password = form.password;
 
       await api.put(`/admin/users/${editId}`, payload);
@@ -263,7 +263,7 @@ export default function AdminClients() {
                 {!loading &&
                   filtered.map((k) => (
                     <tr key={k.id}>
-                      <td style={td}>{k.name}</td>
+                      <td style={td}>{k.ime_i_prezime}</td>
                       <td style={td}>{k.email}</td>
                       <td style={td}>
                         {k.created_at
@@ -322,8 +322,8 @@ export default function AdminClients() {
               <input
                 style={input}
                 placeholder="Ime i prezime"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                value={form.ime_i_prezime}
+                onChange={(e) => setForm({ ...form, ime_i_prezime: e.target.value })}
                 required
               />
               <input

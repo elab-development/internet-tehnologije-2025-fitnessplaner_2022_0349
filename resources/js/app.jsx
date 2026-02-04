@@ -22,6 +22,7 @@ import AdminAdmin from "./src/pages/AdminAdmin";
 
 import Navbar from "./src/components/Navbar";
 import TrainerExercises from "./src/pages/TrainerExercises";
+import TrainerUsers from "./src/pages/TrainerUsers";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -112,7 +113,15 @@ function App() {
 
             />
                   
+            <Route
+              path="/trener/users"
+              element={
+                <RequireRole allow={["trener"]}>
+                  <TrainerUsers/>
+                </RequireRole>
+              }
 
+            />
 
             {/* ADMIN */}
             <Route

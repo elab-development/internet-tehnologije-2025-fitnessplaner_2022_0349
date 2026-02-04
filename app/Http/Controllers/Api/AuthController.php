@@ -13,13 +13,13 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'ime_i_prezime' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:6',
         ]);
 
         $user = User::create([
-            'name' => $data['name'],
+            'ime_i_prezime' => $data['ime_i_prezime'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'uloga' => 'klijent', // default
@@ -31,7 +31,7 @@ class AuthController extends Controller
             'token' => $token,
             'user' => [
                 'id' => $user->id,
-                'ime' => $user->name,
+                'ime' => $user->ime_i_prezime,
                 'email' => $user->email,
                 'uloga' => $user->uloga,
             ]
@@ -61,7 +61,7 @@ class AuthController extends Controller
             'token' => $token,
             'user' => [
                 'id' => $user->id,
-                'name' => $user->name,
+                'ime_i_prezime' => $user->ime_i_prezime,
                 'email' => $user->email,
                 'uloga' => $user->uloga,
             ]
@@ -84,7 +84,7 @@ class AuthController extends Controller
 public function listUsers(Request $request)
 {
     $query = User::query()
-        ->select('id', 'name', 'email', 'uloga', 'created_at');
+        ->select('id', 'ime_i_prezime', 'email', 'uloga', 'created_at');
 
     // npr. ?uloga=trener ili ?uloga=admin
     if ($request->has('uloga')) {
@@ -109,7 +109,7 @@ public function updateUser(Request $request, $id)
     }
 
     $data = $request->validate([
-        'name' => 'sometimes|required|string|max:255',
+        'ime_i_prezime' => 'sometimes|required|string|max:255',
         'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
         'password' => 'sometimes|nullable|string|min:6',
         'uloga' => ['sometimes', Rule::in(['klijent', 'trener', 'admin'])],
@@ -144,7 +144,7 @@ public function updateUser(Request $request, $id)
         'message' => 'Izmena uspešna.',
         'user' => [
             'id' => $user->id,
-            'name' => $user->name,
+            'ime_i_prezime' => $user->ime_i_prezime,
             'email' => $user->email,
             'uloga' => $user->uloga,
             'created_at' => $user->created_at,
@@ -174,14 +174,14 @@ public function deleteUser(Request $request, $id)
 public function createUser(Request $request)
 {
     $data = $request->validate([
-        'name' => 'required|string|max:255',
+        'ime_i_prezime' => 'required|string|max:255',
         'email' => 'required|email|max:255|unique:users,email',
         'password' => 'required|string|min:6',
         'uloga' => ['required', Rule::in(['trener', 'admin'])], // admin sme da pravi samo trenera ili admina
     ]);
 
     $user = User::create([
-        'name' => $data['name'],
+        'ime_i_prezime' => $data['ime_i_prezime'],
         'email' => $data['email'],
         'password' => Hash::make($data['password']),
         'uloga' => $data['uloga'],
@@ -191,7 +191,7 @@ public function createUser(Request $request)
         'message' => 'Korisnik uspešno kreiran.',
         'user' => [
             'id' => $user->id,
-            'name' => $user->name,
+            'ime_i_prezime' => $user->ime_i_prezime,
             'email' => $user->email,
             'uloga' => $user->uloga,
         ],

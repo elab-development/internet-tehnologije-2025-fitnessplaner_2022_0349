@@ -15,10 +15,12 @@ class User extends Authenticatable
 
 
     protected $fillable = [
+        'ime_i_prezime',
         'name',
         'email',
         'password',
         'uloga', // admin | trener | klijent
+        'trener_id', 
     ];
 
     protected $hidden = [
@@ -55,4 +57,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Hidratacija::class, 'korisnik_id');
     }
+    public function trener()
+{
+    return $this->belongsTo(User::class, 'trener_id'); // klijent -> trener
+}
+
+public function klijenti()
+{
+    return $this->hasMany(User::class, 'trener_id');   // trener -> klijenti
+}
+
 }

@@ -37,7 +37,7 @@ export default function AdminHome() {
   }, [q, treneri]);
 
   const resetForm = () => {
-    setForm({ name: "", email: "", password: "" });
+    setForm({ ime_i_prezime: "", email: "", password: "" });
     setEditId(null);
   };
 
@@ -49,7 +49,7 @@ export default function AdminHome() {
   const startEdit = (t) => {
     setMsg("");
     setEditId(t.id);
-    setForm({ name: t.name || "", email: t.email || "", password: "" });
+    setForm({ name: t.ime_i_prezime || "", email: t.email || "", password: "" });
     setMode("edit");
   };
 
@@ -90,7 +90,7 @@ export default function AdminHome() {
     setLoading(true);
     setMsg("");
     try {
-      const payload = { name: form.name, email: form.email };
+      const payload = { ime_i_prezime: form.ime_i_prezime, email: form.email };
       if (form.password?.trim()) payload.password = form.password;
 
       await api.put(`/admin/users/${editId}`, payload);
@@ -187,7 +187,7 @@ export default function AdminHome() {
 
                 {!loading && filtered.map((t) => (
                   <tr key={t.id}>
-                    <td style={td}>{t.name}</td>
+                    <td style={td}>{t.ime_i_prezime}</td>
                     <td style={td}>{t.email}</td>
                     <td style={td}>{new Date(t.created_at).toLocaleString()}</td>
                     <td style={td}>
@@ -210,7 +210,7 @@ export default function AdminHome() {
             </h3>
 
             <form onSubmit={mode === "add" ? submitAdd : submitEdit} style={{ display: "grid", gap: 10, maxWidth: 520 }}>
-              <input style={input} placeholder="Ime i prezime" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+              <input style={input} placeholder="Ime i prezime" value={form.ime_i_prezime} onChange={(e) => setForm({ ...form, ime_i_prezime: e.target.value })} required />
               <input style={input} placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
               <input style={input} type="password" placeholder={mode === "add" ? "Lozinka" : "Nova lozinka (opciono)"} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required={mode === "add"} />
 

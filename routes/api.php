@@ -8,6 +8,7 @@ use App\Http\Controllers\HidratacijaController;
 use App\Http\Controllers\DnevnikIshraneController;
 use App\Http\Controllers\NamirnicaController;
 use App\Http\Controllers\RasporedTreningaController;
+use App\Http\Controllers\TrenerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,10 +70,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rute za trenera i admina (opciono - odkomentarisati ako treba)
     Route::middleware('uloga:trener,admin')->group(function () {
+
         Route::post('/vezbe', [VezbaController::class, 'store']);
         Route::put('/vezbe/{id}', [VezbaController::class, 'update']);
         Route::delete('/vezbe/{id}', [VezbaController::class, 'destroy']);
+
+      
     });
+
+     Route::middleware('uloga:trener')->group(function () {
+        Route::get('/trener/users', [TrenerController::class, 'index']);
+    });
+
+   
 
     // Admin rute (opciono - odkomentarisati ako treba)
     Route::middleware('uloga:admin')->group(function () {
@@ -82,4 +92,4 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/admin/users/{id}', [AuthController::class, 'deleteUser']);
     });
 
-}); 
+ });
