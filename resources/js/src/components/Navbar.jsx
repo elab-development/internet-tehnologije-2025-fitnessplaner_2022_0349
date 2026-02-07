@@ -49,6 +49,7 @@ export default function Navbar({ onLogout }) {
             <NavLink to="/trener" style={linkStyle}>Trener</NavLink>
             <NavLink to="/trener/users" style={linkStyle}>Moji klijenti</NavLink>
             <NavLink to="/trener/vezbe" style={linkStyle}>Vežbe</NavLink>
+            <NavLink to="/korisnik/ishrana" style={linkStyle}>Ishrana</NavLink>
 
             </>
             )}
@@ -59,6 +60,7 @@ export default function Navbar({ onLogout }) {
               <NavLink to="/korisnik/treninzi" style={linkStyle}>Treninzi</NavLink>
               <NavLink to="/korisnik/vezbe" style={linkStyle}>Vežbe</NavLink>
               <NavLink to="/korisnik/hidratacija" style={linkStyle}>Hidratacija</NavLink>
+              <NavLink to="/korisnik/ishrana" style={linkStyle}>Ishrana</NavLink>
 
 
             </>

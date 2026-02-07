@@ -76,22 +76,22 @@ class NamirnicaController extends Controller
             return response()->json(['message'=>'Namirnica nije pronadjena.'],404);
         }
         $validator = Validator::make($request->all(), [
-    'naziv'                     => 'required|string|max:255',
-    'kalorije_na_100g'          => 'required|integer',
-    'proteini_na_100g'          => 'required|numeric',
-    'ugljeni_hidrati_na_100g'   => 'required|numeric',
-    'masti_na_100g'             => 'required|numeric',
-]);
+            'naziv'                     => 'required|string|max:255',
+            'kalorije_na_100g'          => 'required|integer',
+            'proteini_na_100g'          => 'required|numeric',
+            'ugljeni_hidrati_na_100g'   => 'required|numeric',
+            'masti_na_100g'             => 'required|numeric',
+        ]);
 
-   if($validator->fails()){
-    return response()->json([
-   'message'=> 'Validacija nije prosla',
-   'errors'=> $validator->errors(),
-    ],422);
-   }
-   $data=$validator->validated();
-   //$namirnica->update($data);
-   return response()->json($namirnica,200);
+        if($validator->fails()){
+        return response()->json([
+        'message'=> 'Validacija nije prosla',
+        'errors'=> $validator->errors(),
+         ],422);
+        }
+         $data=$validator->validated();
+        $namirnica->update($data);
+        return response()->json($namirnica,200);
     }
 
     /**
@@ -104,7 +104,28 @@ class NamirnicaController extends Controller
         if(!$namirnica){
             return response()->json(['message'=>'Namirnica nije pronadjena.'],404);
         }
-        $namirnica->delete;
+        $namirnica->delete();
         return response()->json(['message'=>'Namirnica je obrisana.'],200);
     }
+
+
+    public function search(Request $request)
+    {
+        $q = $request->query('q', '');
+
+        return \App\Models\Namirnica::query()
+            ->where('naziv', 'like', "%{$q}%")
+            ->orderBy('naziv')
+            ->limit(20)
+            ->get([
+                'id',
+                'naziv',
+                'kalorije_na_100g',
+                'proteini_na_100g',
+                'ugljeni_hidrati_na_100g',
+                'masti_na_100g'
+            ]);
+}
+
+
 }

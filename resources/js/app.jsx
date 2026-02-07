@@ -17,10 +17,12 @@ import ClientTrainings from "./src/pages/ClientTrainings";
 import ClientExercises from "./src/pages/ClientExercises";
 import ClientHydration from "./src/pages/ClientHydration";
 
+import Navbar from "./src/components/Navbar";
+import ClientMeals from "./src/pages/ClientMeals";
+
 import AdminClients from "./src/pages/AdminClients";
 import AdminAdmin from "./src/pages/AdminAdmin";
 
-import Navbar from "./src/components/Navbar";
 import TrainerExercises from "./src/pages/TrainerExercises";
 import TrainerUsers from "./src/pages/TrainerUsers";
 
@@ -92,6 +94,15 @@ function App() {
                 </RequireRole>
               }
             />
+
+            <Route
+            path="/korisnik/ishrana"
+            element={
+            <RequireRole allow={["klijent"]}>
+              <ClientMeals />
+            </RequireRole>
+            }
+          />
 
             {/* TRENER */}
             <Route

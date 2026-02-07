@@ -8,6 +8,7 @@ use App\Http\Controllers\HidratacijaController;
 use App\Http\Controllers\DnevnikIshraneController;
 use App\Http\Controllers\NamirnicaController;
 use App\Http\Controllers\RasporedTreningaController;
+use App\Http\Controllers\StavkaIshraneController;
 use App\Http\Controllers\TrenerController;
 
 /*
@@ -61,12 +62,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/rasporedi_treninga/{id}', [RasporedTreningaController::class, 'update']);
     Route::delete('/rasporedi_treninga/{id}', [RasporedTreningaController::class, 'destroy']);
 
-    // Dnevnici ishrane
+        // Dnevnici ishrane
     Route::get('/dnevnici_ishrane', [DnevnikIshraneController::class, 'index']);
-    Route::get('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'show']);
     Route::post('/dnevnici_ishrane', [DnevnikIshraneController::class, 'store']);
-    Route::put('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'update']);
-    Route::delete('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'destroy']);
+
+  
+    Route::get('/dnevnici_ishrane-datum/{datum}', [DnevnikIshraneController::class, 'byDate']);
+    Route::get('/dnevnici_ishrane/{datum}/grupisano', [DnevnikIshraneController::class, 'byDateGrouped']);
+
+    Route::get('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'show'])->whereNumber('id');
+    Route::put('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'update'])->whereNumber('id');
+    Route::delete('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'destroy'])->whereNumber('id');
+
+    // Stavke ishrane
+    Route::post('/stavke_ishrane', [StavkaIshraneController::class, 'store']);
+    Route::delete('/stavke_ishrane/{id}', [StavkaIshraneController::class, 'destroy'])->whereNumber('id');
+    Route::get('/off/search', [OpenFoodFactsController::class, 'search']);
+    Route::post('/off/import', [OpenFoodFactsController::class, 'import']);
+
 
     // Rute za trenera i admina (opciono - odkomentarisati ako treba)
     Route::middleware('uloga:trener,admin')->group(function () {
