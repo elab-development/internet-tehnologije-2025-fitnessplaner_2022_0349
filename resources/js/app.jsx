@@ -19,6 +19,7 @@ import ClientHydration from "./src/pages/ClientHydration";
 
 import Navbar from "./src/components/Navbar";
 import ClientMeals from "./src/pages/ClientMeals";
+import ClientMealsStats from "./src/pages/ClientMealsStats";
 
 
 import AdminClients from "./src/pages/AdminClients";
@@ -105,6 +106,14 @@ function App() {
             }
           />
 
+            <Route
+              path="/korisnik/ishrana/statistika"
+              element={
+                <RequireRole allow={["klijent"]}>
+                  <ClientMealsStats />
+                </RequireRole>
+              }
+            />
 
 
             {/* TRENER */}

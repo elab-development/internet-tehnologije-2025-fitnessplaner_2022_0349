@@ -128,7 +128,12 @@ export default function ClientMeals() {
               />
             </div>
 
-            
+            <button
+              onClick={() => navigate(`/korisnik/ishrana/statistika?date=${datum}`)}
+              style={styles.secondaryBtn}
+            >
+              📊 Statistika
+            </button>
           </div>
         </div>
 
