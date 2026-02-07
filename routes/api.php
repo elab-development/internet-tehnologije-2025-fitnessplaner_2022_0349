@@ -10,7 +10,7 @@ use App\Http\Controllers\NamirnicaController;
 use App\Http\Controllers\RasporedTreningaController;
 use App\Http\Controllers\StavkaIshraneController;
 use App\Http\Controllers\TrenerController;
-
+use App\Http\Controllers\OpenFoodFactsController;
 /*
 |--------------------------------------------------------------------------
 | API RUTE – AUTENTIFIKACIJA

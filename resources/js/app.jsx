@@ -20,6 +20,7 @@ import ClientHydration from "./src/pages/ClientHydration";
 import Navbar from "./src/components/Navbar";
 import ClientMeals from "./src/pages/ClientMeals";
 
+
 import AdminClients from "./src/pages/AdminClients";
 import AdminAdmin from "./src/pages/AdminAdmin";
 
@@ -103,6 +104,8 @@ function App() {
             </RequireRole>
             }
           />
+
+
 
             {/* TRENER */}
             <Route
