@@ -153,7 +153,44 @@ export default function ClientMeals() {
           </div>
         </div>
 
-        
+        <div style={styles.card}>
+          <div style={styles.cardTitle}>Pretraga namirnica (OpenFoodFacts)</div>
+
+          <div style={styles.searchRow}>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="npr. banana, yogurt, kikiriki..."
+              style={styles.searchInput}
+            />
+            <button
+              onClick={onNxSearch}
+              disabled={q.trim().length < 2}
+              style={styles.primaryBtn}
+            >
+              Traži
+            </button>
+          </div>
+
+          <div style={styles.results}>
+            {(results || []).slice(0, 8).map((x, i) => (
+              <button
+                key={i}
+                onClick={() => onNxPick(x)}
+                style={styles.resultItem}
+              >
+                <div style={styles.resultName}>{x.name}</div>
+                <div style={styles.resultHint}>Klikni da uvezeš u bazu</div>
+              </button>
+            ))}
+
+            {(results || []).length === 0 && (
+              <div style={styles.muted}>
+                Nema rezultata. Unesi bar 2 slova i klikni “Traži”.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div style={styles.card}>
