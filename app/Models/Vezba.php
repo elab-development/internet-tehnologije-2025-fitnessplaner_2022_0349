@@ -20,6 +20,8 @@ class Vezba extends Model
         'misicna_grupa',
         'oprema',
         'video_url',
+
+        //dodato na odbrani
     ];
 
     // (3) Relacija: jedna vezba se pojavljuje u više izvođenja vežbe

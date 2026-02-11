@@ -29,7 +29,6 @@ class OpenFoodFactsController extends Controller
         $data = $res->json();
         $products = $data['products'] ?? [];
 
-        // Vrati samo sta ti treba za UI
         $mapped = array_map(function ($p) {
             return [
                 'name' => $p['product_name'] ?? null,
@@ -39,9 +38,7 @@ class OpenFoodFactsController extends Controller
             ];
         }, $products);
 
-        // izbaci one bez imena
         $mapped = array_values(array_filter($mapped, fn($x) => !empty($x['name'])));
-
         return response()->json($mapped);
     }
 
