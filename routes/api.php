@@ -81,8 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/off/import', [OpenFoodFactsController::class, 'import']);
 
 
-    // Rute za trenera i admina (opciono - odkomentarisati ako treba)
-    Route::middleware('uloga:trener,admin')->group(function () {
+    Route::middleware('uloga:trener')->group(function () {
 
         Route::post('/vezbe', [VezbaController::class, 'store']);
         Route::put('/vezbe/{id}', [VezbaController::class, 'update']);
@@ -97,7 +96,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
    
 
-    // Admin rute (opciono - odkomentarisati ako treba)
     Route::middleware('uloga:admin')->group(function () {
         Route::post('/admin/users', [AuthController::class, 'createUser']);
         Route::get('/admin/users', [AuthController::class, 'listUsers']);

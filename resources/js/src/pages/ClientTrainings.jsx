@@ -1,6 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { api } from "../api";
 import PageCard from "../components/PageCard";
+import {
+  MdSearch,
+  MdPlayArrow,
+  MdEdit,
+  MdDelete,
+} from "react-icons/md";
+
+
 
 export default function ClientTrainings() {
   const [mode, setMode] = useState("list"); // list | add | edit | view | workout
@@ -117,7 +125,6 @@ export default function ClientTrainings() {
 
   useEffect(() => {
     loadAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filteredTreninzi = useMemo(() => {
@@ -214,7 +221,6 @@ export default function ClientTrainings() {
     }
   };
 
-  // ====== Detalji ======
   const openDetails = async (trening) => {
     setLoading(true);
     setMsgAction("");
@@ -229,7 +235,6 @@ export default function ClientTrainings() {
     }
   };
 
-  // ====== Workout start ======
   const startWorkout = async (trening) => {
     setLoading(true);
     setMsgAction("");
@@ -653,17 +658,19 @@ export default function ClientTrainings() {
                       <td style={td}>{t.tezina ?? "-"}</td>
                       <td style={td}>
                         <button style={btnGhost} onClick={() => openDetails(t)}>
-                          🔎 Detalji
-                        </button>{" "}
-                        <button style={btnGhost} onClick={() => startWorkout(t)}>
-                          ▶ Započni
-                        </button>{" "}
-                        <button style={btnGhost} onClick={() => startEdit(t)}>
-                          ✏️ Izmeni
-                        </button>{" "}
-                        <button style={btnGhost} onClick={() => removeTraining(t.id)}>
-                          🗑️ Obriši
-                        </button>
+  🔎 Detalji
+</button>{" "}
+<button style={btnGhost} onClick={() => startWorkout(t)}>
+  ▶ Započni
+</button>{" "}
+<button style={btnGhost} onClick={() => startEdit(t)}>
+  ✏️ Izmeni
+</button>{" "}
+<button style={btnGhost} onClick={() => removeTraining(t.id)}>
+  🗑️ Obriši
+</button>
+
+
                       </td>
                     </tr>
                   ))}

@@ -12,7 +12,6 @@ export default function RoleRedirect() {
         const res = await api.get("/me");
         const uloga = res.data?.uloga;
 
-        // Ako backend vrati full user, sačuvaj ga (nije obavezno)
         localStorage.setItem("user", JSON.stringify(res.data));
 
         if (uloga === "admin") return navigate("/admin", { replace: true });
@@ -21,7 +20,6 @@ export default function RoleRedirect() {
         // default
         return navigate("/korisnik", { replace: true });
       } catch (e) {
-        // token ne valja ili istekao
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         setMsg("Sesija je istekla. Preusmeravam na prijavu...");
