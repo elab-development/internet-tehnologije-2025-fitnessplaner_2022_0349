@@ -11,7 +11,6 @@ export default function RequireRole({ allow, children }) {
         const res = await api.get("/me");
         const uloga = res.data?.uloga;
 
-        // allow može biti npr. ["admin"] ili ["admin","trener"]
         setState({ loading: false, ok: allow.includes(uloga) });
       } catch {
         setState({ loading: false, ok: false });

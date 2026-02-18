@@ -10,7 +10,7 @@ class ProveriUlogu
 {
     public function handle(Request $request, Closure $next, ...$uloge): Response
     {
-        $user = $request->user(); // korisnik iz tokena (sanctum)
+        $user = $request->user(); 
 
         if (!$user) {
             return response()->json(['message' => 'Niste prijavljeni.'], 401);

@@ -17,7 +17,6 @@ export default function Navbar({ onLogout }) {
         onLogout?.();
         navigate("/", { replace: true });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const linkStyle = ({ isActive }) => ({
