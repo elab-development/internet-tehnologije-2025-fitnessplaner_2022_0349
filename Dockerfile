@@ -1,17 +1,13 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
-RUN a2enmod rewrite
+RUN apt-get update && apt-get install -y zip unzip
+RUN docker-php-ext-install pdo_mysql
 
-RUN apt-get update && apt-get install -y \
-    git unzip libzip-dev \
- && docker-php-ext-install pdo pdo_mysql zip \
- && rm -rf /var/lib/apt/lists/*
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+WORKDIR /app
 
-WORKDIR /var/www/html
-COPY . .
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-RUN chown -R www-data:www-data /var/www/html
-
-EXPOSE 80
+ENTRYPOINT ["/entrypoint.sh"]
