@@ -7,6 +7,7 @@ import {
   getNamirnice,
   offSearch,
   offImport,
+  generateAiSummary,
 } from "../api";
 
 export default function ClientMeals() {
@@ -24,6 +25,9 @@ export default function ClientMeals() {
   const [q, setQ] = useState("");
   const [results, setResults] = useState([]);
 
+  const [aiSummary, setAiSummary] = useState(null);
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+
   const navigate = useNavigate();
 
 
@@ -34,6 +38,7 @@ export default function ClientMeals() {
   }
 
   useEffect(() => {
+    setAiSummary(null);
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datum]);
@@ -78,6 +83,23 @@ export default function ClientMeals() {
     const r = await offImport(payload);
     setNamirnicaId(String(r.namirnica_id));
     await load();
+  }
+
+  async function onGenerateAi() {
+    if (!data?.stavke || data.stavke.length === 0) return;
+    
+    setIsGeneratingAi(true);
+    try {
+      const res = await generateAiSummary({
+        stavke: data.stavke,
+        totali: data.totali
+      });
+      setAiSummary(res.summary);
+    } catch (error) {
+      setAiSummary("Došlo je do greške pri generisanju analize.");
+    } finally {
+      setIsGeneratingAi(false);
+    }
   }
 
     const stavke = data?.stavke ?? [];
@@ -282,6 +304,25 @@ export default function ClientMeals() {
         </div>
 
 
+      </div>
+
+      <div style={styles.aiCard}>
+        <div style={styles.cardHeaderRow}>
+          <div style={styles.aiTitle}>AI Nutricionista</div>
+          <button 
+            onClick={onGenerateAi} 
+            disabled={isGeneratingAi || stavke.length === 0}
+            style={isGeneratingAi || stavke.length === 0 ? styles.aiBtnDisabled : styles.aiBtn}
+          >
+            {isGeneratingAi ? "Generisanje..." : "Generiši analizu za ovaj dan"}
+          </button>
+        </div>
+        
+        {aiSummary && (
+          <div style={styles.aiText}>
+            {aiSummary}
+          </div>
+        )}
       </div>
 
       <div style={styles.mealsGrid}>
@@ -584,4 +625,43 @@ const styles = {
     },
 
 
+  aiCard: {
+    background: "linear-gradient(145deg, #ffffff, #f8fafc)",
+    border: "1px solid #e2e8f0",
+    borderRadius: 16,
+    padding: 14,
+    boxShadow: "0 6px 18px rgba(15, 23, 42, 0.04)",
+    marginTop: 14,
+  },
+  aiTitle: { fontWeight: 900, color: "#0f172a", fontSize: 16 },
+  aiBtn: {
+    border: 0,
+    borderRadius: 12,
+    padding: "8px 14px",
+    background: "#1e88e5", 
+    color: "#fff",
+    fontWeight: 900,
+    cursor: "pointer",
+    transition: "background 0.2s"
+  },
+  aiBtnDisabled: {
+    border: 0,
+    borderRadius: 12,
+    padding: "8px 14px",
+    background: "#cbd5e1",
+    color: "#f8fafc",
+    fontWeight: 900,
+    cursor: "not-allowed",
+  },
+  aiText: {
+    marginTop: 14,
+    color: "#334155",
+    fontWeight: 600,
+    fontSize: 14,
+    lineHeight: 1.6,
+    padding: 14,
+    background: "#f0fdf4", 
+    borderRadius: 12,
+    border: "1px solid #bbf7d0"
+  },
 };

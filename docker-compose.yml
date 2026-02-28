@@ -30,6 +30,8 @@ services:
       DB_DATABASE: fitness
       DB_USERNAME: root
       DB_PASSWORD: root
+      GROQ_API_KEY: ${GROQ_API_KEY}
+
 
 volumes:
   db_data:

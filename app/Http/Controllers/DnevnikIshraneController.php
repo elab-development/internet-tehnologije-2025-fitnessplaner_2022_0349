@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DnevnikIshrane;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class DnevnikIshraneController extends Controller
@@ -216,5 +217,61 @@ class DnevnikIshraneController extends Controller
                 'uzina'   => $grupe->get('uzina', collect())->values(),
             ],
         ]);
+    }
+
+    public function getAiSummary(Request $request)
+    {
+        $stavke = $request->input('stavke', []);
+        $totali = $request->input('totali', []);
+
+        if (empty($stavke)) {
+            return response()->json(['summary' => 'Nema dovoljno podataka za analizu.']);
+        }
+
+        $mealText = "";
+        foreach ($stavke as $s) {
+            $naziv = $s['namirnica']['naziv'] ?? 'Hrana';
+            $mealText .= "- {$s['obrok']}: {$naziv} ({$s['kolicina_g']}g)\n";
+        }
+
+        $kcal = $totali['kalorije'] ?? 0;
+        $prot = $totali['proteini'] ?? 0;
+        $uh = $totali['ugljeni_hidrati'] ?? 0;
+        $masti = $totali['masti'] ?? 0;
+        $totalsText = "Ukupno: $kcal kcal, $prot g proteina, $uh g UH, $masti g masti.";
+
+        $systemPrompt = "Ti si licencirani sportski nutricionista i specijalista za metaboličku optimizaciju. " .
+                "Tvoj ton je autoritativan, analitičan i profesionalan. Fokusiraš se na nutritivnu gustinu, " .
+                "tajming obroka i uticaj na performans.";
+
+        $userPrompt = "Izvrši stručnu evaluaciju dnevnog nutritivnog profila na osnovu sledećih podataka:\n\n" .
+              "UNOS:\n$mealText\n$totalsText\n\n" .
+              "ZAHTEV:\n" .
+              "1. Analiziraj nutritivnu vrednost i balans makronutrijenata.\n" .
+              "2. Navedi jednu ključnu prednost trenutnog unosa.\n" .
+              "3. Pruži jednu do dve precizne, naučno utemeljene preporuke za optimizaciju (npr. glikemijska kontrola, sinteza proteina ili hidratacija).\n" .
+              "ODGOVOR: Maksimalno 4 rečenice, isključivo na srpskom jeziku (latinica).";
+
+        try {
+            $response = Http::withToken(env('GROQ_API_KEY'))
+                ->timeout(10) 
+                ->post('https://api.groq.com/openai/v1/chat/completions', [
+                    'model' => 'llama-3.3-70b-versatile',
+                    'messages' => [
+                        ['role' => 'system', 'content' => $systemPrompt],
+                        ['role' => 'user', 'content' => $userPrompt]
+                    ],
+                    'temperature' => 0.5,
+                ]);
+
+            if ($response->successful()) {
+                return response()->json(['summary' => $response->json('choices.0.message.content')]);
+            }
+            
+            return response()->json(['summary' => 'AI trenutno nije dostupan.'], 500);
+
+        } catch (\Exception $e) {
+            return response()->json(['summary' => 'Greška pri povezivanju sa AI asistentom.'], 500);
+        }
     }
 }
