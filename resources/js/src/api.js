@@ -27,6 +27,10 @@ export const deleteStavkaIshrane = (id) =>
 export const getNamirnice = () =>
   api.get(`/namirnice`).then((r) => r.data);
 
+// Poziv za AI analizu ishrane
+export const generateAiSummary = (payload) =>
+  api.post("/dnevnik/ai-summary", payload).then((r) => r.data);
+
 /* =======================
    
 ======================= */

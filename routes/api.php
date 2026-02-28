@@ -74,6 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'update'])->whereNumber('id');
     Route::delete('/dnevnici_ishrane/{id}', [DnevnikIshraneController::class, 'destroy'])->whereNumber('id');
 
+    Route::post('/dnevnik/ai-summary', [DnevnikIshraneController::class, 'getAiSummary']);
+
     // Stavke ishrane
     Route::post('/stavke_ishrane', [StavkaIshraneController::class, 'store']);
     Route::delete('/stavke_ishrane/{id}', [StavkaIshraneController::class, 'destroy'])->whereNumber('id');
