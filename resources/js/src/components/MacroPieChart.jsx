@@ -45,7 +45,13 @@ const MacroPieChart = ({ namirnica }) => {
                         nameKey="name"
                     />
                     <Tooltip formatter={(value) => `${value} g`} />
-                    <Legend />
+                    <Legend 
+                        wrapperStyle={{ 
+                            position: 'relative', 
+                            marginTop: '10px',
+                            paddingBottom: '10px'
+                        }} 
+                    />
                 </PieChart>
             </ResponsiveContainer>
         </div>
