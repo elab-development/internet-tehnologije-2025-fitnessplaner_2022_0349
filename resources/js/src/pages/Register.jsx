@@ -22,7 +22,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await axios.post("/register", formData);
+      await axios.post("/api/register", formData);
       setMessage("Registracija uspešna! Sada se možete prijaviti.");
       setTimeout(() => navigate("/"), 900);
     } catch (err) {

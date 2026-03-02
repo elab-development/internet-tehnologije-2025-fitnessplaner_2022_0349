@@ -19,7 +19,7 @@ services:
   app:
     build: 
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.local
     ports:
       - "8000:8000"
     volumes:
