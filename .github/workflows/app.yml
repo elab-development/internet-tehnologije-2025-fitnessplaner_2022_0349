@@ -33,7 +33,7 @@ jobs:
         run: php artisan key:generate
 
       # - name: Run Unit Tests
-      #   run: php artisan test
+      #   run: php artisan test 
 
       # --- SAMO NA MAIN GRANI -> PROD ---
 
