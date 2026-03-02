@@ -17,7 +17,7 @@ export default function Login({ onAuth }) {
     setMessage("");
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/login", formData);
+      const res = await axios.post("/login", formData);
       const { token, user } = res.data;
 
       localStorage.setItem("token", token);
