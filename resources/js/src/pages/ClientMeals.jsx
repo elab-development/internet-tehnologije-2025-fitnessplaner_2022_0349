@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import MacroPieChart from "../components/MacroPieChart"; 
 import {
   getDnevnikByDate,
   addStavkaIshrane,
@@ -283,23 +284,26 @@ export default function ClientMeals() {
 
         <div style={styles.previewRow}>
           {!selected ? (
-            <div style={styles.muted}>Izaberi namirnicu da vidiš preračun za količinu.</div>
+            <div style={styles.muted}>Izaberi namirnicu da vidiš preračun za količinu i grafikon.</div>
           ) : (
-            <>
-              <div style={styles.previewLeft}>
+            <div style={styles.previewContent}>
+              <div style={styles.previewLeftCol}>
                 <div style={styles.previewName}>{selected.naziv}</div>
                 <div style={styles.previewHint}>
                   Preračun za <b>{amount || 0}g</b>
                 </div>
+                <div style={styles.previewMacros}>
+                  <span style={styles.previewChip}>Kcal: {preview.kcal.toFixed(0)}</span>
+                  <span style={styles.previewChip}>P: {preview.p.toFixed(1)}g</span>
+                  <span style={styles.previewChip}>UH: {preview.uh.toFixed(1)}g</span>
+                  <span style={styles.previewChip}>M: {preview.m.toFixed(1)}g</span>
+                </div>
               </div>
 
-              <div style={styles.previewMacros}>
-                <span style={styles.previewChip}>Kcal: {preview.kcal.toFixed(0)}</span>
-                <span style={styles.previewChip}>P: {preview.p.toFixed(1)}g</span>
-                <span style={styles.previewChip}>UH: {preview.uh.toFixed(1)}g</span>
-                <span style={styles.previewChip}>M: {preview.m.toFixed(1)}g</span>
+              <div style={styles.pieContainer}>
+                <MacroPieChart namirnica={selected} />
               </div>
-            </>
+            </div>
           )}
         </div>
 
@@ -588,30 +592,52 @@ const styles = {
     },
     muted: { color: "#64748b", fontWeight: 700 },
 
-  previewRow: {
-    marginTop: 10,
-    padding: 12,
-    borderRadius: 14,
-    border: "1px solid #e6eef7",
-    background: "#f8fbff",
-    display: "flex",
-    justifyContent: "space-between",
-    gap: 12,
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-    previewLeft: { display: "grid", gap: 2 },
-    previewName: { fontWeight: 900, color: "#0f172a" },
-    previewHint: { fontSize: 12, fontWeight: 700, color: "#64748b" },
-    previewMacros: { display: "flex", gap: 8, flexWrap: "wrap" },
+    previewRow: {
+      marginTop: 16,
+      padding: 16,
+      borderRadius: 16,
+      border: "1px solid #e6eef7",
+      background: "#f8fbff",
+    },
+    previewContent: { 
+      display: "flex", 
+      justifyContent: "space-between", 
+      gap: 20, 
+      flexWrap: "wrap", 
+      alignItems: "center" 
+    },
+    previewLeftCol: { 
+      display: "flex", 
+      flexDirection: "column", 
+      gap: 12, 
+      flex: 1, 
+      minWidth: 200 
+    },
+    previewName: { fontWeight: 900, color: "#0f172a", fontSize: 18 },
+    previewHint: { fontSize: 13, fontWeight: 700, color: "#64748b" },
+    previewMacros: { display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 },
     previewChip: {
-      fontSize: 12,
+      fontSize: 13,
       fontWeight: 900,
-      padding: "6px 10px",
+      padding: "8px 12px",
       borderRadius: 999,
       background: "#ffffff",
       border: "1px solid #dbeafe",
       color: "#0f172a",
+      boxShadow: "0 2px 4px rgba(15, 23, 42, 0.02)"
+    },
+    
+    pieContainer: {
+      flex: 1,
+      minWidth: 300,
+      background: "#ffffff",
+      borderRadius: 16,
+      border: "1px solid #dbeafe",
+      padding: "12px",
+      boxShadow: "0 6px 16px rgba(15, 23, 42, 0.05)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
     },
 
 
