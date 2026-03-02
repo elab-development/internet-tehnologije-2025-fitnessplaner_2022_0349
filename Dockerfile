@@ -3,7 +3,7 @@ FROM php:8.2-apache
 RUN apt-get update && apt-get install -y libzip-dev zip unzip \
     && docker-php-ext-install pdo_mysql zip
 
-RUN a2dismod mpm_event mpm_worker || true \
+RUN rm -f /etc/apache2/mods-enabled/mpm_* \
     && a2enmod mpm_prefork rewrite
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
